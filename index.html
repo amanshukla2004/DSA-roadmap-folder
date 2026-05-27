@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Tracker Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+  <div class="header">
+    <div class="header-left">
+      <h1>DSA Tracker</h1>
+      <p>Professional Topic-wise Roadmap</p>
+    </div>
+    <div class="header-actions">
+      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+      <button class="btn" onclick="document.getElementById('importFile').click()">Import JSON</button>
+      <button class="btn btn-primary" onclick="exportData()">Export Data</button>
+    </div>
+  </div>
+
+  <div class="heatmap-container">
+    <div class="heatmap-title"><span>Activity (Last 60 Days)</span> <span id="streakCount" style="color:var(--text-secondary);font-weight:400">0 Day Streak</span></div>
+    <div class="heatmap-grid" id="heatmapGrid"></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Progress</div>
+      <div class="stat-val"><span id="doneQ">0</span> / <span id="totalQ">0</span></div>
+      <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;"><span id="totalPct">0%</span> Completed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Difficulty Breakdown</div>
+      <div class="diff-stats">
+        <div class="diff-E">Easy: <span id="doneE">0</span>/<span id="totE">0</span></div>
+        <div class="diff-M">Med: <span id="doneM">0</span>/<span id="totM">0</span></div>
+        <div class="diff-H">Hard: <span id="doneH">0</span>/<span id="totH">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search questions..." oninput="renderTopicView()">
+    <button class="btn" id="filterBtnAll" onclick="setFilter('all')">All</button>
+    <button class="btn" id="filterBtnUnsolved" onclick="setFilter('unsolved')">Unsolved</button>
+    <button class="btn" id="filterBtnBookmarks" onclick="setFilter('bookmarks')">Bookmarks</button>
+  </div>
+
+  <div id="topicView"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Interview Prep - Premium Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --border: #334155;
+    --radius: 12px;
+    --font: 'Inter', sans-serif;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg-main); color: var(--text-primary); line-height: 1.5; padding: 20px; }
+  .app-container { max-width: 1000px; margin: 0 auto; }
+  
+  .header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .header-left h1 { font-size: 28px; font-weight: 700; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; color: transparent; }
+  .header-left p { color: var(--text-secondary); margin-top: 4px; font-size: 14px; }
+  .header-actions { display: flex; gap: 12px; }
+  
+  .btn { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+  .btn:hover { background: var(--bg-hover); border-color: var(--accent); }
+  .btn-primary { background: var(--accent); color: white; border: none; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  .stat-val { font-size: 28px; font-weight: 700; }
+  .stat-label { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .diff-stats { display: flex; gap: 12px; margin-top: 12px; font-size: 12px; font-weight: 500; }
+  .diff-E { color: var(--success); }
+  .diff-M { color: var(--warning); }
+  .diff-H { color: var(--danger); }
+  
+  .progress-wrap { background: var(--bg-main); height: 6px; border-radius: 10px; margin-top: 12px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+  
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .tab { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; background: var(--bg-card); transition: all 0.2s; }
+  .tab:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .tab.active { background: var(--text-primary); color: var(--bg-main); border-color: var(--text-primary); }
+  
+  .topic-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: transform 0.2s; }
+  .topic-card:hover { border-color: var(--bg-hover); }
+  .topic-header { display: flex; align-items: center; padding: 16px 20px; cursor: pointer; user-select: none; }
+  .topic-icon { font-size: 24px; margin-right: 16px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 10px; }
+  .topic-title { flex: 1; }
+  .topic-name { font-size: 16px; font-weight: 600; }
+  .topic-sub { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .topic-progress { font-size: 14px; font-weight: 500; color: var(--accent); margin-right: 16px; }
+  
+  .topic-body { border-top: 1px solid var(--border); display: none; }
+  .topic-body.open { display: block; animation: slideDown 0.3s ease-out; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .subpattern { padding: 20px; border-bottom: 1px solid var(--border); }
+  .subpattern:last-child { border-bottom: none; }
+  .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .sub-name { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .sub-tag { font-size: 11px; padding: 2px 8px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); color: var(--accent); }
+  
+  .q-list { display: flex; flex-direction: column; gap: 8px; }
+  .q-item-container { background: rgba(255,255,255,0.02); border: 1px solid transparent; border-radius: 8px; transition: all 0.2s; }
+  .q-item-container:hover { background: rgba(255,255,255,0.04); border-color: var(--border); }
+  .q-item { display: flex; align-items: center; padding: 10px 14px; gap: 12px; }
+  
+  .q-check { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+  .q-check:hover { border-color: var(--success); }
+  .q-check.done { background: var(--success); border-color: var(--success); }
+  .q-check.done::after { content: '✓'; color: #fff; font-size: 12px; font-weight: bold; }
+  
+  .q-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text-primary); text-decoration: none; transition: color 0.2s; }
+  .q-name:hover { color: var(--accent); }
+  .q-name.done { color: var(--text-muted); text-decoration: line-through; }
+  
+  .q-actions { display: flex; gap: 8px; align-items: center; }
+  .icon-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 4px; border-radius: 4px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.1); }
+  .icon-btn.active.star { color: var(--warning); }
+  .icon-btn.active.note { color: var(--accent); }
+  
+  .diff-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 12px; }
+  .badge-E { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+  .badge-M { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+  .badge-H { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+  .badge-SD { background: rgba(167, 139, 250, 0.1); color: #a78bfa; }
+  
+  .notes-panel { padding: 0 14px 14px 46px; display: none; }
+  .notes-panel.open { display: block; }
+  .notes-textarea { width: 100%; background: var(--bg-main); border: 1px solid var(--border); border-radius: 8px; padding: 10px; color: var(--text-primary); font-family: inherit; font-size: 13px; resize: vertical; min-height: 60px; transition: border-color 0.2s; }
+  .notes-textarea:focus { outline: none; border-color: var(--accent); }
+  
+  .add-q-form { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+  .input-text { flex: 1; background: var(--bg-main); border: 1px solid var(--border); color: white; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-family: inherit; }
+  .input-select { background: var(--bg-main); border: 1px solid var(--border); color: white; padding: 8px; border-radius: 6px; font-size: 13px; font-family: inherit; }
+  .input-text:focus, .input-select:focus { outline: none; border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="header">
+    <div class="header-left">
+      <h1>DSA Mastery Tracker</h1>
+      <p>Premium 60-Day Topic-wise Roadmap</p>
+    </div>
+    <div class="header-actions">
+      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+      <button class="btn" onclick="document.getElementById('importFile').click()">📥 Import</button>
+      <button class="btn btn-primary" onclick="exportData()">📤 Export JSON</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Progress</div>
+      <div class="stat-val" id="totalPct">0%</div>
+      <div class="stat-label"><span id="doneQ">0</span> / <span id="totalQ">0</span> Questions</div>
+      <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Difficulty Breakdown</div>
+      <div class="diff-stats">
+        <div class="diff-E">Easy: <span id="doneE">0</span>/<span id="totE">0</span></div>
+        <div class="diff-M">Med: <span id="doneM">0</span>/<span id="totM">0</span></div>
+        <div class="diff-H">Hard: <span id="doneH">0</span>/<span id="totH">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs" id="topicTabs"></div>
+  <div id="topicView"></div>
+</div>
+
+<script>
+const topics = [
+  {
+    id:'arrays', name:'Arrays & Hashing', icon:'📦', color:'#E1F5EE', days:'1–4, 20, 24–28, 56, 61–62, 69–71, 85–86, 96–102',
+    subpatterns:[
+      { name:'Basic array manipulation', tag:'Easy warm-up', qs:[
+        {n:'Two Sum',d:'E'},{n:'Best Time to Buy and Sell Stock',d:'E'},{n:'Majority Element',d:'E'},{n:'Move Zeroes',d:'E'},
+        {n:'Squares of a Sorted Array',d:'E'},{n:'Merge Sorted Array',d:'E'},{n:'Remove Duplicates from Sorted Array',d:'E'},
+        {n:'Remove Duplicates from Sorted Array II',d:'M'},{n:'Find All Numbers Disappeared in an Array',d:'E'},
+        {n:'Third Maximum Number',d:'E'},{n:'Valid Mountain Array',d:'E'},{n:'Sort Array By Parity',d:'E'},
+        {n:'Max Consecutive Ones',d:'E'},{n:'Build Array from Permutation',d:'E'},{n:'Shuffle the Array',d:'E'},
+        {n:'Find Pivot Index',d:'E'},{n:'Running Sum of 1d Array',d:'E'},{n:'Remove Element',d:'E'},
+        {n:'Max Consecutive Ones III',d:'M'},{n:'Non-decreasing Array',d:'M'}
+      ]},
+      { name:'Two pointers & sorting', tag:'Pattern', qs:[
+        {n:'3Sum',d:'M'},{n:'3Sum Closest',d:'M'},{n:'Container With Most Water',d:'M'},
+        {n:'Sort Colors',d:'M'},{n:'Rotate Array',d:'M'},{n:'Product of Array Except Self',d:'M'},
+        {n:'Trapping Rain Water',d:'H'},{n:'Next Permutation',d:'M'},
+        {n:'4Sum',d:'M',added:true},{n:'Two Sum II - Input Array Is Sorted',d:'M',added:true}
+      ]},
+      { name:'Prefix sum & range queries', tag:'Pattern', qs:[
+        {n:'Range Sum Query Immutable',d:'E'},{n:'Contiguous Array',d:'M'},{n:'Subarray Sum Equals K',d:'M'},
+        {n:'Continuous Subarray Sum',d:'M'},{n:'Number of Submatrices That Sum to Target',d:'H'},
+        {n:'Matrix Block Sum',d:'M'},{n:'Minimum Size Subarray Sum',d:'M'}
+      ]},
+      { name:'Sliding window', tag:'Pattern', qs:[
+        {n:'Longest Substring Without Repeating Characters',d:'M'},{n:'Maximum Points You Can Obtain from Cards',d:'M'},
+        {n:'Shortest Subarray with Sum at Least K',d:'H'},{n:'Sliding Window Maximum',d:'H'},
+        {n:'Subarrays with K Different Integers',d:'H'},{n:'Fruit Into Baskets',d:'M'},
+        {n:'Minimum Window Substring',d:'H'},{n:'Permutation in String',d:'M'},
+        {n:'Find All Anagrams in a String',d:'M'}
+      ]},
+      { name:'Interval problems', tag:'Pattern', qs:[
+        {n:'Merge Intervals',d:'M'},{n:'Insert Interval',d:'M'},{n:'Non-overlapping Intervals',d:'M'},
+        {n:'Interval List Intersections',d:'M'},{n:'Minimum Number of Arrows to Burst Balloons',d:'M'},
+        {n:'Maximum Number of Events That Can Be Attended',d:'M'}
+      ]},
+      { name:'Hashing & frequency', tag:'Pattern', qs:[
+        {n:'Design HashMap',d:'E'},{n:'Ransom Note',d:'E'},{n:'Contains Duplicate',d:'E'},
+        {n:'Contains Duplicate II',d:'E'},{n:'Jewels and Stones',d:'E'},{n:'Unique Number of Occurrences',d:'E'},
+        {n:'Word Pattern',d:'E'},{n:'Number of Good Pairs',d:'E'},{n:'Majority Element II',d:'M'},
+        {n:'Longest Consecutive Sequence',d:'M'},{n:'Insert Delete GetRandom O(1)',d:'M'},
+        {n:'Find All Duplicates in an Array',d:'M'},{n:'K-diff Pairs in an Array',d:'M'},
+        {n:'Find and Replace Pattern',d:'M'},{n:'Group Anagrams',d:'M'},
+        {n:'Custom Sort String',d:'M'},{n:'Intersection of Two Arrays',d:'E'},
+        {n:'Intersection of Two Arrays II',d:'E'},{n:'Find Common Characters',d:'E'}
+      ]},
+      { name:'Matrix problems', tag:'Pattern', qs:[
+        {n:'Valid Sudoku',d:'M'},{n:'Rotate Image',d:'M'},{n:'Set Matrix Zeroes',d:'M'},
+        {n:'Game of Life',d:'M'},{n:'Diagonal Traverse',d:'M'},{n:'Battleships in a Board',d:'M'},
+        {n:'Spiral Matrix',d:'M'},{n:'Spiral Matrix II',d:'M'},{n:'Search a 2D Matrix',d:'M'},
+        {n:'Search a 2D Matrix II',d:'M'},{n:'Maximum Gap',d:'H'},{n:'First Missing Positive',d:'H'},
+        {n:'Snapshot Array',d:'M'},{n:'Shuffle an Array',d:'M'},
+        {n:'Count of Smaller Numbers After Self',d:'H'},{n:'Reverse Pairs',d:'H'}
+      ]},
+    ]
+  },
+  {
+    id:'linkedlist', name:'Linked Lists', icon:'🔗', color:'#FAEEDA', days:'5–6, 31–34, 40, 100, 103',
+    subpatterns:[
+      { name:'Basic operations', tag:'Fundamentals', qs:[
+        {n:'Reverse Linked List',d:'E'},{n:'Remove Linked List Elements',d:'E'},
+        {n:'Remove Duplicates from Sorted List',d:'E'},{n:'Merge Two Sorted Lists',d:'E'},
+        {n:'Middle of the Linked List',d:'E'},{n:'Palindrome Linked List',d:'E'},
+        {n:'Intersection of Two Linked Lists',d:'E'},{n:'Linked List Cycle',d:'E'},
+        {n:'Delete Node in a Linked List',d:'M'},{n:'Remove Duplicates from Sorted List II',d:'M'}
+      ]},
+      { name:'Two pointer / slow-fast', tag:'Pattern', qs:[
+        {n:'Remove Nth Node From End of List',d:'M'},{n:'Next Greater Node In Linked List',d:'M'},
+        {n:'Linked List Cycle II',d:'M',added:true},{n:'Happy Number',d:'E'}
+      ]},
+      { name:'Reversal & reordering', tag:'Pattern', qs:[
+        {n:'Reverse Linked List II',d:'M'},{n:'Swap Nodes in Pairs',d:'M'},
+        {n:'Reverse Nodes in k-Group',d:'H'},{n:'Odd Even Linked List',d:'M'},
+        {n:'Partition List',d:'M'},{n:'Reorder List',d:'M'},
+        {n:'Rotate List',d:'M'}
+      ]},
+      { name:'Multiple lists & merging', tag:'Pattern', qs:[
+        {n:'Add Two Numbers',d:'M'},{n:'Add Two Numbers II',d:'M'},
+        {n:'Copy List with Random Pointer',d:'M'},{n:'Sort List',d:'M'},
+        {n:'Merge k Sorted Lists',d:'H'}
+      ]},
+      { name:'Advanced structures', tag:'Hard', qs:[
+        {n:'LRU Cache',d:'M'},{n:'LFU Cache',d:'H'}
+      ]}
+    ]
+  },
+  {
+    id:'trees', name:'Trees & BST', icon:'🌳', color:'#E1F5EE', days:'8–10, 46–54',
+    subpatterns:[
+      { name:'Tree traversals', tag:'Fundamentals', qs:[
+        {n:'Binary Tree Preorder Traversal',d:'E'},{n:'Binary Tree Inorder Traversal',d:'E'},
+        {n:'Binary Tree Postorder Traversal',d:'E'},{n:'Binary Tree Level Order Traversal',d:'M'},
+        {n:'Binary Tree Zigzag Level Order Traversal',d:'M'},{n:'Binary Tree Right Side View',d:'M'},
+        {n:'Maximum Width of Binary Tree',d:'M'},{n:'Maximum Level Sum of a Binary Tree',d:'M'}
+      ]},
+      { name:'Tree properties', tag:'Pattern', qs:[
+        {n:'Maximum Depth of Binary Tree',d:'E'},{n:'Invert Binary Tree',d:'E'},
+        {n:'Symmetric Tree',d:'E'},{n:'Balanced Binary Tree',d:'E'},{n:'Diameter of Binary Tree',d:'E'},
+        {n:'Same Tree',d:'E'},{n:'Subtree of Another Tree',d:'E'},{n:'Merge Two Binary Trees',d:'E'},
+        {n:'Cousins in Binary Tree',d:'E'},{n:'Count Complete Tree Nodes',d:'M'}
+      ]},
+      { name:'Path problems', tag:'Pattern', qs:[
+        {n:'Path Sum',d:'E'},{n:'Binary Tree Paths',d:'E'},{n:'Path Sum II',d:'M'},
+        {n:'Path Sum III',d:'M'},{n:'Binary Tree Maximum Path Sum',d:'H'},
+        {n:'Sum Root to Leaf Numbers',d:'M'},{n:'Find Bottom Left Tree Value',d:'M'},
+        {n:'Distribute Coins in Binary Tree',d:'M'},{n:'All Nodes Distance K in Binary Tree',d:'M'}
+      ]},
+      { name:'Tree construction & serialization', tag:'Pattern', qs:[
+        {n:'Convert Sorted Array to Binary Search Tree',d:'E'},{n:'Construct Binary Tree from Preorder and Inorder Traversal',d:'M'},
+        {n:'Flatten Binary Tree to Linked List',d:'M'},{n:'Populate Next Right Pointers in Each Node',d:'M'},
+        {n:'Populate Next Right Pointers in Each Node II',d:'M'},
+        {n:'Serialize and Deserialize Binary Tree',d:'H'},
+        {n:'Step-By-Step Directions From a Binary Tree Node to Another',d:'M'}
+      ]},
+      { name:'BST operations', tag:'Pattern', qs:[
+        {n:'Range Sum of BST',d:'E'},{n:'Delete Node in a BST',d:'M'},
+        {n:'Validate Binary Search Tree',d:'M'},{n:'Kth Smallest Element in a BST',d:'M'},
+        {n:'Lowest Common Ancestor of a BST',d:'M'},{n:'Lowest Common Ancestor of a Binary Tree',d:'M'},
+        {n:'Convert Sorted List to Binary Search Tree',d:'M'},
+        {n:'Construct BST from Preorder Traversal',d:'M'},{n:'Binary Search Tree Iterator',d:'M'},
+        {n:'Recover Binary Search Tree',d:'H'},{n:'Trim a Binary Search Tree',d:'M'},
+        {n:'Balance a Binary Search Tree',d:'M'},{n:'Unique Binary Search Trees',d:'M'},
+        {n:'Unique Binary Search Trees II',d:'M'}
+      ]}
+    ]
+  },
+  {
+    id:'graphs', name:'Graphs', icon:'🕸️', color:'#EEEDFE', days:'21, 63–68, 111, 113–114',
+    subpatterns:[
+      { name:'BFS', tag:'Pattern', qs:[
+        {n:'Flood Fill',d:'E'},{n:'Island Perimeter',d:'E'},{n:'Find if Path Exists in Graph',d:'E'},
+        {n:'Number of Islands',d:'M'},{n:'01 Matrix',d:'M'},{n:'Rotting Oranges',d:'M'},
+        {n:'Clone Graph',d:'M'},{n:'Open the Lock',d:'M'},{n:'Shortest Bridge',d:'M'},
+        {n:'Shortest Path in Binary Matrix',d:'M'},{n:'Pacific Atlantic Water Flow',d:'M'},
+        {n:'Surrounded Regions',d:'M'},{n:'Max Area of Island',d:'M'},
+        {n:'All Paths From Source to Target',d:'M'},{n:'Bus Routes',d:'H'},
+        {n:'Word Ladder',d:'H'},{n:'Word Ladder II',d:'H'},
+        {n:'Shortest Path in a Grid with Obstacles Elimination',d:'H'},
+        {n:'Making A Large Island',d:'H'}
+      ]},
+      { name:'DFS & backtracking on graphs', tag:'Pattern', qs:[
+        {n:'Number of Provinces',d:'M'},{n:'Accounts Merge',d:'M'},
+        {n:'Word Search',d:'M'},{n:'Redundant Connection',d:'M'},
+        {n:'Number of Operations to Make Network Connected',d:'M'},
+        {n:'Evaluate Division',d:'M'},{n:'Critical Connections in a Network',d:'H'},
+        {n:'Reconstruct Itinerary',d:'H'}
+      ]},
+      { name:'Topological sort', tag:'Pattern', qs:[
+        {n:'Course Schedule',d:'M'},{n:'Course Schedule II',d:'M'},
+        {n:'Longest Increasing Path in a Matrix',d:'H'},
+        {n:'Alien Dictionary',d:'H',added:true},{n:'Sequence Reconstruction',d:'M',added:true}
+      ]},
+      { name:'Shortest path (Dijkstra / Bellman-Ford)', tag:'Pattern', qs:[
+        {n:'Network Delay Time',d:'M'},{n:'Cheapest Flights Within K Stops',d:'M'},
+        {n:'Minimum Height Trees',d:'M'},{n:'Swim in Rising Water',d:'H'},
+        {n:'Path With Minimum Effort',d:'M',added:true},{n:'Find the City with Smallest Number of Neighbors',d:'M',added:true}
+      ]},
+      { name:'Union-Find', tag:'Pattern', qs:[
+        {n:'Redundant Connection',d:'M'},{n:'Number of Islands (UF)',d:'M',added:true},
+        {n:'Accounts Merge (UF)',d:'M',added:true},{n:'Number of Connected Components in an Undirected Graph',d:'M',added:true},
+        {n:'Graph Valid Tree',d:'M',added:true}
+      ]}
+    ]
+  },
+  {
+    id:'dp', name:'Dynamic Programming', icon:'🧠', color:'#FAECE7', days:'72–73, 76–81, 83–84, 123, 126, 129, 132',
+    subpatterns:[
+      { name:'1D DP — linear', tag:'Fundamentals', qs:[
+        {n:'Fibonacci Number',d:'E'},{n:'Climbing Stairs',d:'E'},{n:'Min Cost Climbing Stairs',d:'E'},
+        {n:'House Robber',d:'M'},{n:'House Robber II',d:'M'},{n:'Jump Game',d:'M'},
+        {n:'Jump Game II',d:'M'},{n:'Jump Game III',d:'M'},{n:'Decode Ways',d:'M'},
+        {n:'Perfect Squares',d:'M'},{n:'Delete and Earn',d:'M'},{n:'Minimum Cost For Tickets',d:'M'},
+        {n:'Knight Dialer',d:'M'}
+      ]},
+      { name:'Coin change / unbounded knapsack', tag:'Pattern', qs:[
+        {n:'Coin Change',d:'M'},{n:'Coin Change II',d:'M'},{n:'Combination Sum IV',d:'M'},
+        {n:'Minimum Number of Taps to Open to Water a Garden',d:'H'}
+      ]},
+      { name:'0/1 Knapsack & subset', tag:'Pattern', qs:[
+        {n:'Partition Equal Subset Sum',d:'M'},{n:'Target Sum',d:'M'},
+        {n:'Partition to K Equal Sum Subsets',d:'M'},{n:'Last Stone Weight II',d:'M',added:true}
+      ]},
+      { name:'Longest subsequence (LIS / LCS)', tag:'Pattern', qs:[
+        {n:'Longest Increasing Subsequence',d:'M'},{n:'Longest Common Subsequence',d:'M'},
+        {n:'Delete Operation for Two Strings',d:'M'},{n:'Longest String Chain',d:'M'},
+        {n:'Russian Doll Envelopes',d:'H'},{n:'Number of Matching Subsequences',d:'M'},
+        {n:'Is Subsequence',d:'E'}
+      ]},
+      { name:'2D DP — grids & paths', tag:'Pattern', qs:[
+        {n:'Unique Paths',d:'M'},{n:'Unique Paths II',d:'M'},{n:'Minimum Path Sum',d:'M'},
+        {n:'Triangle',d:'M'},{n:'Maximal Square',d:'M'},{n:'Minimum Cost to Cut a Stick',d:'H'},
+        {n:'Maximum Profit in Job Scheduling',d:'H'}
+      ]},
+      { name:'String DP', tag:'Pattern', qs:[
+        {n:'Longest Palindromic Substring',d:'M'},{n:'Longest Palindromic Subsequence',d:'M'},
+        {n:'Palindromic Substrings',d:'M'},{n:'Palindrome Partitioning',d:'M'},
+        {n:'Palindrome Partitioning II',d:'H'},{n:'Minimum Insertion Steps to Make a String Palindrome',d:'H'},
+        {n:'Edit Distance',d:'M'},{n:'Word Break',d:'M'},{n:'Word Break II',d:'H'},
+        {n:'Regular Expression Matching',d:'H'},{n:'Wildcard Matching',d:'H'},
+        {n:'Interleaving String',d:'H',added:true}
+      ]},
+      { name:'DP on trees & intervals', tag:'Advanced', qs:[
+        {n:'House Robber III',d:'M'},{n:'Burst Balloons',d:'H'},{n:'Split Array Largest Sum',d:'H'},
+        {n:'Largest Divisible Subset',d:'M'},{n:'Integer Break',d:'M'},{n:'Different Ways to Add Parentheses',d:'M'},
+        {n:'Best Time to Buy and Sell Stock IV',d:'H'},{n:'Maximal Rectangle',d:'H'},
+        {n:'Binary Tree Cameras',d:'H'},{n:'Maximum Product Subarray',d:'M'}
+      ]},
+      { name:'Classic DP problems', tag:'Must-know', qs:[
+        {n:'Maximum Subarray',d:'M'},{n:'Pascal\'s Triangle',d:'E'},
+        {n:'Best Time to Buy and Sell Stock II',d:'M'},{n:'Best Time to Buy and Sell Stock',d:'E'}
+      ]}
+    ]
+  },
+  {
+    id:'strings', name:'Strings', icon:'📝', color:'#FBEAF0', days:'11–13, 41–43, 85, 107–109',
+    subpatterns:[
+      { name:'Palindrome', tag:'Pattern', qs:[
+        {n:'Valid Palindrome',d:'E'},{n:'Valid Palindrome II',d:'M'},{n:'Longest Palindrome',d:'E'},
+        {n:'Palindrome Number',d:'E'},{n:'Palindrome Pairs',d:'H'},{n:'Shortest Palindrome',d:'H'}
+      ]},
+      { name:'Anagram & pattern matching', tag:'Pattern', qs:[
+        {n:'Valid Anagram',d:'E'},{n:'First Unique Character in a String',d:'E'},
+        {n:'Isomorphic Strings',d:'E'},{n:'Find the Index of the First Occurrence in a String',d:'E'},
+        {n:'String to Integer (atoi)',d:'M'},{n:'Zigzag Conversion',d:'M'},
+        {n:'Count and Say',d:'M'},{n:'Encode and Decode TinyURL',d:'M'}
+      ]},
+      { name:'String manipulation', tag:'Basics', qs:[
+        {n:'Reverse String',d:'E'},{n:'Reverse String II',d:'E'},{n:'Reverse Words in a String III',d:'E'},
+        {n:'Reverse Words in a String',d:'M'},{n:'Reverse Only Letters',d:'E'},
+        {n:'Reverse Vowels of a String',d:'E'},{n:'Length of Last Word',d:'E'},
+        {n:'Add Strings',d:'E'},{n:'Fizz Buzz',d:'E'},{n:'Defanging an IP Address',d:'E'},
+        {n:'Is Subsequence',d:'E'},{n:'Longest Common Prefix',d:'E'},
+        {n:'String Compression',d:'M'},{n:'Remove All Adjacent Duplicates In String',d:'E'},
+        {n:'Roman to Integer',d:'E'},{n:'Integer to Roman',d:'M'},
+        {n:'Integer to English Words',d:'H'},{n:'Nth Digit',d:'M'},
+        {n:'Text Justification',d:'H'},{n:'Multiply Strings',d:'M'}
+      ]},
+      { name:'Subsequence & window on strings', tag:'Pattern', qs:[
+        {n:'Longest Substring with At Least K Repeating Characters',d:'M'},
+        {n:'Longest Repeating Character Replacement',d:'M'},{n:'Minimum Window Substring',d:'H'},
+        {n:'Longest Duplicate Substring',d:'H'},{n:'Number of Matching Subsequences',d:'M'}
+      ]}
+    ]
+  },
+  {
+    id:'stack_queue', name:'Stack & Queue', icon:'📚', color:'#FAEEDA', days:'6, 35–40, 100, 106–107',
+    subpatterns:[
+      { name:'Basic stack', tag:'Fundamentals', qs:[
+        {n:'Valid Parentheses',d:'E'},{n:'Min Stack',d:'M'},{n:'Implement Queue using Stacks',d:'E'},
+        {n:'Backspace String Compare',d:'E'},{n:'Evaluate Reverse Polish Notation',d:'M'},
+        {n:'Decode String',d:'M'},{n:'Simplify Path',d:'M'},{n:'Longest Absolute File Path',d:'M'}
+      ]},
+      { name:'Monotonic stack', tag:'Pattern', qs:[
+        {n:'Next Greater Element I',d:'E'},{n:'Next Greater Element II',d:'M'},
+        {n:'Next Greater Element III',d:'M'},{n:'Daily Temperatures',d:'M'},
+        {n:'132 Pattern',d:'M'},{n:'Asteroid Collision',d:'M'},{n:'Remove K Digits',d:'M'},
+        {n:'Remove Duplicate Letters',d:'M'},{n:'Largest Rectangle in Histogram',d:'H'},
+        {n:'The Skyline Problem',d:'H'},{n:'Maximum Frequency Stack',d:'H'},
+        {n:'Sliding Window Maximum',d:'H'}
+      ]},
+      { name:'Valid parentheses variants', tag:'Pattern', qs:[
+        {n:'Minimum Remove to Make Valid Parentheses',d:'M'},
+        {n:'Remove All Adjacent Duplicates in String II',d:'M'},
+        {n:'Flatten Nested List Iterator',d:'M'},{n:'Longest Valid Parentheses',d:'H'},
+        {n:'Basic Calculator',d:'H'},{n:'Basic Calculator II',d:'M'},{n:'Remove Invalid Parentheses',d:'H'}
+      ]}
+    ]
+  },
+  {
+    id:'binary_search', name:'Binary Search', icon:'🔍', color:'#E6F1FB', days:'19, 55–58, 110, 116',
+    subpatterns:[
+      { name:'Classic binary search', tag:'Fundamentals', qs:[
+        {n:'Binary Search',d:'E'},{n:'Search Insert Position',d:'E'},{n:'First Bad Version',d:'E'},
+        {n:'Valid Perfect Square',d:'E'},{n:'Kth Missing Positive Number',d:'E'},
+        {n:'Find First and Last Position of Element in Sorted Array',d:'M'},
+        {n:'Find the Duplicate Number',d:'M'},{n:'Single Element in a Sorted Array',d:'M'},
+        {n:'Median of Two Sorted Arrays',d:'H'}
+      ]},
+      { name:'Search in rotated array', tag:'Pattern', qs:[
+        {n:'Search in Rotated Sorted Array',d:'M'},{n:'Search in Rotated Sorted Array II',d:'M'},
+        {n:'Find Minimum in Rotated Sorted Array',d:'M'},{n:'Find Minimum in Rotated Sorted Array II',d:'H'},
+        {n:'Peak Index in a Mountain Array',d:'M'},{n:'Find Peak Element',d:'M'}
+      ]},
+      { name:'Binary search on answer', tag:'Pattern', qs:[
+        {n:'Capacity To Ship Packages Within D Days',d:'M'},{n:'Koko Eating Bananas',d:'M'},
+        {n:'Minimum Size Subarray Sum',d:'M'},{n:'Time Based Key-Value Store',d:'M'},
+        {n:'Split Array Largest Sum',d:'H'},{n:'Maximum Profit in Job Scheduling',d:'H'},
+        {n:'Minimum Number of Days to Make m Bouquets',d:'M',added:true}
+      ]},
+      { name:'2D matrix search', tag:'Pattern', qs:[
+        {n:'Search a 2D Matrix',d:'M'},{n:'Search a 2D Matrix II',d:'M'},
+        {n:'Kth Smallest Element in a Sorted Matrix',d:'M'}
+      ]}
+    ]
+  },
+  {
+    id:'heap_greedy', name:'Heap, Greedy & Trie', icon:'⛏️', color:'#E1F5EE', days:'87–88, 91–92, 96, 115',
+    subpatterns:[
+      { name:'Heap / priority queue', tag:'Pattern', qs:[
+        {n:'Kth Largest Element in a Stream',d:'E'},{n:'K Closest Points to Origin',d:'M'},
+        {n:'Top K Frequent Elements',d:'M'},{n:'Find K Closest Elements',d:'M'},
+        {n:'Kth Largest Element in an Array',d:'M'},{n:'Kth Smallest Element in a Sorted Matrix',d:'M'},
+        {n:'Top K Frequent Words',d:'M'},{n:'Reorganize String',d:'M'},
+        {n:'Sort Characters By Frequency',d:'M'},{n:'Car Pooling',d:'M'},
+        {n:'Find K Pairs with Smallest Sums',d:'M'},
+        {n:'Task Scheduler',d:'M'},{n:'Maximum Number of Events That Can Be Attended',d:'M'},
+        {n:'Merge k Sorted Lists',d:'H'},{n:'Find Median from Data Stream',d:'H'},
+        {n:'Smallest Range Covering Elements from K Lists',d:'H'},
+        {n:'Minimum Number of Refueling Stops',d:'H'}
+      ]},
+      { name:'Greedy', tag:'Pattern', qs:[
+        {n:'Can Place Flowers',d:'E'},{n:'Maximum Units on a Truck',d:'E'},
+        {n:'Gas Station',d:'M'},{n:'Partition Labels',d:'M'},{n:'Valid Parenthesis String',d:'M'},
+        {n:'Wiggle Sort II',d:'M'},{n:'Max Chunks To Make Sorted',d:'M'},{n:'H-Index',d:'M'},
+        {n:'Candy',d:'H'},{n:'Jump Game',d:'M'},{n:'Jump Game II',d:'M'},
+        {n:'Largest Number',d:'M'},{n:'Pancake Sorting',d:'M'}
+      ]},
+      { name:'Trie', tag:'Pattern', qs:[
+        {n:'Implement Trie (Prefix Tree)',d:'M'},{n:'Design Add and Search Words Data Structure',d:'M'},
+        {n:'Search Suggestions System',d:'M'},{n:'Remove Sub-Folders from the Filesystem',d:'M'},
+        {n:'Word Search II',d:'H'},{n:'Word Break',d:'M'},{n:'Palindrome Pairs',d:'H'},
+        {n:'Maximum XOR of Two Numbers in an Array',d:'M'}
+      ]}
+    ]
+  },
+  {
+    id:'backtracking', name:'Backtracking & Bit Manipulation', icon:'🎲', color:'#EEEDFE', days:'93–95, 98–99, 117–118',
+    subpatterns:[
+      { name:'Permutations & combinations', tag:'Pattern', qs:[
+        {n:'Permutations',d:'M'},{n:'Permutations II',d:'M'},{n:'Subsets',d:'M'},{n:'Subsets II',d:'M'},
+        {n:'Combinations',d:'M'},{n:'Letter Combinations of a Phone Number',d:'M'},
+        {n:'Generate Parentheses',d:'M'},{n:'Next Permutation',d:'M'},{n:'Permutation Sequence',d:'H'}
+      ]},
+      { name:'Combination sum & target', tag:'Pattern', qs:[
+        {n:'Combination Sum',d:'M'},{n:'Combination Sum III',d:'M'},{n:'Combination Sum IV',d:'M'},
+        {n:'Restore IP Addresses',d:'M'},{n:'N-Queens',d:'H'},{n:'Sudoku Solver',d:'H'},
+        {n:'Unique Paths III',d:'H'},{n:'K-th Symbol in Grammar',d:'M'},
+        {n:'Remove Invalid Parentheses',d:'H'},{n:'Word Search',d:'M'}
+      ]},
+      { name:'Bit manipulation', tag:'Pattern', qs:[
+        {n:'Add Binary',d:'E'},{n:'Counting Bits',d:'E'},{n:'Number of 1 Bits',d:'E'},
+        {n:'Single Number',d:'E'},{n:'Missing Number',d:'E'},{n:'Reverse Bits',d:'E'},
+        {n:'Hamming Distance',d:'E'},{n:'Single Number II',d:'M'},{n:'Single Number III',d:'M'},
+        {n:'Maximum XOR of Two Numbers in an Array',d:'M'},{n:'Divide Two Integers',d:'M'},
+        {n:'Sum of Two Integers',d:'M'},{n:'Bitwise AND of Numbers Range',d:'M'},{n:'Gray Code',d:'M'}
+      ]},
+      { name:'Math', tag:'Pattern', qs:[
+        {n:'Power of Two',d:'E'},{n:'Happy Number',d:'E'},{n:'Palindrome Number',d:'E'},
+        {n:'Count Primes',d:'M'},{n:'Excel Sheet Column Number',d:'E'},{n:'Add Digits',d:'E'},
+        {n:'Maximum Product of Three Numbers',d:'E'},{n:'Count Odd Numbers in an Interval Range',d:'E'},
+        {n:'Rectangle Overlap',d:'E'},{n:'Sqrt(x)',d:'E'},{n:'Plus One',d:'E'},
+        {n:'Pow(x, n)',d:'M'},{n:'Reverse Integer',d:'M'},{n:'Random Pick with Weight',d:'M'},
+        {n:'Robot Bounded In Circle',d:'M'},{n:'Angle Between Hands of a Clock',d:'M'},
+        {n:'Max Points on a Line',d:'H'},{n:'K Closest Points to Origin',d:'M'},
+        {n:'Fraction to Recurring Decimal',d:'M'},{n:'Minimum Area Rectangle',d:'M'}
+      ]}
+    ]
+  }
+];
+
+const dayPlan = [
+  {week:1, days:[
+    {d:1,topic:'Arrays',title:'Array basics I',qs:['Two Sum','Best Time to Buy and Sell Stock','Majority Element','Move Zeroes','Squares of a Sorted Array','Merge Sorted Array']},
+    {d:2,topic:'Arrays',title:'Array basics II',qs:['Remove Duplicates from Sorted Array','Remove Duplicates from Sorted Array II','Find All Numbers Disappeared in an Array','Intersection of Two Arrays','Intersection of Two Arrays II','Maximum Population Year','Find Pivot Index']},
+    {d:3,topic:'Arrays',title:'Array basics III',qs:['Running Sum of 1d Array','Remove Element','Build Array from Permutation','Third Maximum Number','Valid Mountain Array','Find Common Characters','Sum of All Odd Length Subarrays','Sort Array By Parity']},
+    {d:4,topic:'Arrays+Hash',title:'Prefix sum & hashing I',qs:['Range Sum Query Immutable','Shuffle the Array','Max Consecutive Ones','Design HashMap','Ransom Note','Contains Duplicate','Contains Duplicate II','Jewels and Stones']},
+    {d:5,topic:'Linked List',title:'Linked list basics',qs:['Reverse Linked List','Remove Linked List Elements','Remove Duplicates from Sorted List','Merge Two Sorted Lists','Middle of the Linked List','Palindrome Linked List']},
+    {d:6,topic:'Linked List + Stack',title:'Linked list II + stack intro',qs:['Intersection of Two Linked Lists','Linked List Cycle','Valid Parentheses','Implement Queue using Stacks','Backspace String Compare','Next Greater Element I']},
+    {d:7,topic:'Review',title:'Review Week 1 + System Design intro',qs:['Revise Days 1–6','Unique Number of Occurrences','Word Pattern','Number of Good Pairs']},
+  ]},
+  {week:2, days:[
+    {d:8,topic:'Trees',title:'Tree traversals',qs:['Binary Tree Preorder Traversal','Binary Tree Inorder Traversal','Binary Tree Postorder Traversal','Maximum Depth of Binary Tree','Invert Binary Tree','Symmetric Tree']},
+    {d:9,topic:'Trees',title:'Tree properties',qs:['Subtree of Another Tree','Diameter of Binary Tree','Balanced Binary Tree','Merge Two Binary Trees','Same Tree']},
+    {d:10,topic:'Trees',title:'Tree paths & BST intro',qs:['Path Sum','Binary Tree Paths','Cousins in Binary Tree','Convert Sorted Array to Binary Search Tree','Range Sum of BST']},
+    {d:11,topic:'Strings',title:'String basics I',qs:['Valid Palindrome','Valid Palindrome II','Longest Palindrome','Longest Common Prefix','Valid Anagram','First Unique Character in a String']},
+    {d:12,topic:'Strings',title:'String basics II',qs:['Is Subsequence','Reverse String','Reverse String II','Reverse Words in a String III','Isomorphic Strings','Remove All Adjacent Duplicates In String']},
+    {d:13,topic:'Strings',title:'String manipulation III',qs:['Defanging an IP Address','Reverse Only Letters','Reverse Vowels of a String','Length of Last Word','Add Strings','Fizz Buzz']},
+    {d:14,topic:'Math',title:'Math & Numbers I',qs:['Roman to Integer','Palindrome Number','Happy Number','Power of Two','Sqrt(x)','Plus One','Count Odd Numbers in an Interval Range','Excel Sheet Column Number']},
+  ]},
+  {week:3, days:[
+    {d:15,topic:'Bits',title:'Bit manipulation',qs:['Add Binary','Counting Bits','Number of 1 Bits','Single Number','Missing Number','Reverse Bits','Hamming Distance']},
+    {d:16,topic:'Binary Search',title:'Binary search basics',qs:['Binary Search','Search Insert Position','First Bad Version','Valid Perfect Square','Kth Missing Positive Number','Kth Largest Element in a Stream']},
+    {d:17,topic:'Hash',title:'Hashing deep dive',qs:['Majority Element II','Longest Consecutive Sequence','Insert Delete GetRandom O(1)','Find All Duplicates in an Array','Flood Fill','Island Perimeter','Find if Path Exists in Graph']},
+    {d:18,topic:'DP',title:'DP fundamentals',qs:['Fibonacci Number','Min Cost Climbing Stairs','Climbing Stairs','Pascal\'s Triangle','Can Place Flowers','Maximum Units on a Truck']},
+    {d:19,topic:'Arrays',title:'Two pointers & sorting',qs:['3Sum','3Sum Closest','Non-decreasing Array','Product of Array Except Self','Sort Colors','Rotate Array']},
+    {d:20,topic:'Intervals',title:'Interval problems',qs:['Merge Intervals','Insert Interval','Non-overlapping Intervals','Interval List Intersections','Minimum Number of Arrows to Burst Balloons']},
+    {d:21,topic:'Review',title:'Review Weeks 2–3',qs:['Revise all days 8–20']},
+  ]},
+  {week:4, days:[
+    {d:22,topic:'Linked List',title:'Linked list advanced I',qs:['Remove Nth Node From End of List','Delete Node in a Linked List','Remove Duplicates from Sorted List II','Next Greater Node In Linked List']},
+    {d:23,topic:'Linked List',title:'Linked list advanced II',qs:['Add Two Numbers','Add Two Numbers II','Copy List with Random Pointer','Reverse Linked List II']},
+    {d:24,topic:'Linked List',title:'Linked list reorder',qs:['Swap Nodes in Pairs','Odd Even Linked List','Partition List','Sort List','Reorder List','Rotate List']},
+    {d:25,topic:'Stack',title:'Stack — monotonic pattern',qs:['Evaluate Reverse Polish Notation','Min Stack','Daily Temperatures','Decode String','Next Greater Element II','Next Greater Element III','Minimum Remove to Make Valid Parentheses','132 Pattern']},
+    {d:26,topic:'Stack',title:'Stack — advanced',qs:['Asteroid Collision','Basic Calculator II','Remove K Digits','Remove Duplicate Letters','Remove All Adjacent Duplicates in String II','Flatten Nested List Iterator','Simplify Path','Longest Absolute File Path']},
+    {d:27,topic:'Arrays',title:'Sliding window',qs:['Contiguous Array','Subarray Sum Equals K','Shortest Unsorted Continuous Subarray','Maximum Points You Can Obtain from Cards','Max Consecutive Ones III']},
+    {d:28,topic:'Arrays',title:'More sliding window',qs:['Permutation in String','Wiggle Sort II','Max Chunks To Make Sorted','H-Index','Continuous Subarray Sum','K-diff Pairs in an Array']},
+  ]},
+  {week:5, days:[
+    {d:29,topic:'Strings',title:'String window & anagram',qs:['Longest Substring Without Repeating Characters','String to Integer (atoi)','Find All Anagrams in a String','Group Anagrams','Pancake Sorting']},
+    {d:30,topic:'Strings',title:'String advanced',qs:['Longest Repeating Character Replacement','Largest Number','Number of Matching Subsequences','Find the Index of the First Occurrence in a String','Zigzag Conversion','Reverse Words in a String','String Compression','Count and Say']},
+    {d:31,topic:'Trees',title:'Tree level order & BFS',qs:['Binary Tree Level Order Traversal','Binary Tree Zigzag Level Order Traversal','Construct Binary Tree from Preorder and Inorder Traversal','Lowest Common Ancestor of a Binary Tree','Binary Tree Right Side View']},
+    {d:32,topic:'Trees',title:'Tree pointers & distance',qs:['Populating Next Right Pointers in Each Node','Populating Next Right Pointers in Each Node II','Maximum Width of Binary Tree','Path Sum II','Path Sum III','All Nodes Distance K in Binary Tree','Flatten Binary Tree to Linked List']},
+    {d:33,topic:'Trees',title:'Tree counting & distribution',qs:['Count Complete Tree Nodes','Sum Root to Leaf Numbers','Find Bottom Left Tree Value','Distribute Coins in Binary Tree','Delete Node in a BST','Validate Binary Search Tree']},
+    {d:34,topic:'Trees',title:'BST advanced',qs:['Kth Smallest Element in a BST','Lowest Common Ancestor of a BST','Convert Sorted List to Binary Search Tree','Construct BST from Preorder Traversal','Binary Search Tree Iterator','Recover Binary Search Tree']},
+    {d:35,topic:'Review',title:'Review weeks 4–5',qs:['Revise all days 22–34']},
+  ]},
+  {week:6, days:[
+    {d:36,topic:'Trees',title:'Hard tree problems',qs:['Binary Tree Maximum Path Sum','Step-By-Step Directions From a Binary Tree Node to Another','Maximum Level Sum of a Binary Tree','Trim a Binary Search Tree','Balance a Binary Search Tree','Serialize and Deserialize Binary Tree']},
+    {d:37,topic:'Binary Search',title:'Binary search rotated & peak',qs:['Search in Rotated Sorted Array','Search in Rotated Sorted Array II','Time Based Key-Value Store','Find Minimum in Rotated Sorted Array','Find First and Last Position of Element in Sorted Array','Find the Duplicate Number','Single Element in a Sorted Array','Find Peak Element']},
+    {d:38,topic:'Binary Search',title:'Binary search answer & 2D',qs:['Capacity To Ship Packages Within D Days','Koko Eating Bananas','Peak Index in a Mountain Array','Search a 2D Matrix','Search a 2D Matrix II','Minimum Size Subarray Sum','Median of Two Sorted Arrays']},
+    {d:39,topic:'Matrix',title:'Matrix problems',qs:['Valid Sudoku','Rotate Image','Set Matrix Zeroes','Game of Life','Diagonal Traverse','Matrix Block Sum','Battleships in a Board','Snapshot Array']},
+    {d:40,topic:'Graphs',title:'Graph BFS I',qs:['Number of Islands','01 Matrix','Clone Graph','Rotting Oranges','Course Schedule','Course Schedule II','Accounts Merge','Word Search']},
+    {d:41,topic:'Graphs',title:'Graph DFS & paths',qs:['Minimum Height Trees','Pacific Atlantic Water Flow','Cheapest Flights Within K Stops','Max Area of Island','Evaluate Division','Number of Provinces','Surrounded Regions','Network Delay Time']},
+    {d:42,topic:'Graphs',title:'Graph advanced',qs:['All Paths From Source to Target','Redundant Connection','Shortest Path in Binary Matrix','Number of Operations to Make Network Connected','Open the Lock','Shortest Bridge','LRU Cache']},
+  ]},
+  {week:7, days:[
+    {d:43,topic:'Hash',title:'Hashing & custom sort',qs:['Find and Replace Pattern','Custom Sort String','Fraction to Recurring Decimal','Fruit Into Baskets','Encode and Decode TinyURL','Minimum Area Rectangle']},
+    {d:44,topic:'DP',title:'DP — subarray',qs:['Maximum Subarray','Maximum Product Subarray','Coin Change','Coin Change II','Jump Game','Jump Game II','Jump Game III','Partition Equal Subset Sum']},
+    {d:45,topic:'DP',title:'DP — sequences',qs:['Longest Increasing Subsequence','Unique Paths','Unique Paths II','Maximal Square','House Robber','House Robber II','House Robber III','Decode Ways']},
+    {d:46,topic:'DP',title:'DP — stock & paths',qs:['Best Time to Buy and Sell Stock II','Minimum Path Sum','Longest Common Subsequence','Palindrome Partitioning','Unique Binary Search Trees','Unique Binary Search Trees II','Target Sum','Triangle']},
+    {d:47,topic:'DP',title:'DP — palindrome & delete',qs:['Longest Palindromic Subsequence','Partition to K Equal Sum Subsets','Delete and Earn','Palindromic Substrings','Longest String Chain','Minimum Cost For Tickets','Delete Operation for Two Strings','Perfect Squares']},
+    {d:48,topic:'DP',title:'DP — interval & tree',qs:['Different Ways to Add Parentheses','Longest Palindromic Substring','Largest Divisible Subset','Integer Break','Knight Dialer','Minesweeper']},
+    {d:49,topic:'Review',title:'Review weeks 6–7',qs:['Revise all days 36–48']},
+  ]},
+  {week:8, days:[
+    {d:50,topic:'Math',title:'Math & geometry',qs:['Pow(x, n)','Reverse Integer','Multiply Strings','Count Primes','Integer to Roman','Robot Bounded In Circle','Angle Between Hands of a Clock','Random Pick with Weight']},
+    {d:51,topic:'Heap',title:'Heap / priority queue I',qs:['K Closest Points to Origin','Task Scheduler','Top K Frequent Elements','Find K Closest Elements','Kth Largest Element in an Array','Kth Smallest Element in a Sorted Matrix','Top K Frequent Words','Reorganize String']},
+    {d:52,topic:'Heap',title:'Heap II + greedy',qs:['Sort Characters By Frequency','Car Pooling','Find K Pairs with Smallest Sums','Maximum Number of Events That Can Be Attended','Gas Station','Partition Labels','Valid Parenthesis String']},
+    {d:53,topic:'Trie',title:'Trie + word problems',qs:['Implement Trie (Prefix Tree)','Word Break','Design Add and Search Words Data Structure','Search Suggestions System','Remove Sub-Folders from the Filesystem']},
+    {d:54,topic:'Backtracking',title:'Backtracking I',qs:['Permutations','Permutations II','Subsets','Subsets II','Next Permutation','Combinations','Letter Combinations of a Phone Number','Generate Parentheses']},
+    {d:55,topic:'Backtracking',title:'Backtracking II',qs:['Combination Sum','Combination Sum III','Combination Sum IV','Restore IP Addresses','Gas Station','Partition Labels']},
+    {d:56,topic:'Greedy',title:'Greedy advanced',qs:['Valid Parenthesis String','Minimum Number of Arrows to Burst Balloons','Single Number II','Single Number III','Maximum XOR of Two Numbers in an Array','Divide Two Integers']},
+  ]},
+  {week:9, days:[
+    {d:57,topic:'Bits',title:'Bit manipulation advanced',qs:['Sum of Two Integers','Bitwise AND of Numbers Range','Gray Code','Sliding Window Maximum','Trapping Rain Water','Count of Smaller Numbers After Self']},
+    {d:58,topic:'Arrays',title:'Hard array problems',qs:['Candy','Reverse Pairs','Subarrays with K Different Integers','Number of Submatrices That Sum to Target','Shortest Subarray with Sum at Least K','Maximum Gap','First Missing Positive']},
+    {d:59,topic:'Stack',title:'Hard stack problems',qs:['Basic Calculator','Largest Rectangle in Histogram','Longest Valid Parentheses','Maximum Frequency Stack','The Skyline Problem','Minimum Window Substring']},
+    {d:60,topic:'Review',title:'Final review',qs:['Palindrome Pairs','Shortest Palindrome','Text Justification','Nth Digit','Integer to English Words','Max Points on a Line']},
+  ]},
+];
+
+// Data Migration & State Initialization
+const V1_KEY = 'dsa_60day_done_v1';
+const V2_KEY = 'dsa_tracker_data_v2';
+
+let appState = {
+  done: [],
+  bookmarks: [],
+  notes: {},
+  customQs: {}
+};
+
+const storedV2 = localStorage.getItem(V2_KEY);
+if (storedV2) {
+  try { appState = Object.assign(appState, JSON.parse(storedV2)); } catch (e) {}
+} else {
+  // Migrate from V1 if exists
+  const storedV1 = localStorage.getItem(V1_KEY);
+  if (storedV1) {
+    try { appState.done = JSON.parse(storedV1); } catch (e) {}
+  }
+}
+
+// Ensure customQs exists in case of old V2 data
+if (!appState.customQs) appState.customQs = {};
+
+// Merge custom questions into the topics array on load
+topics.forEach((t) => {
+  t.subpatterns.forEach((sp, spIdx) => {
+    const key = t.id + '-' + spIdx;
+    if (appState.customQs[key]) {
+      const customQuestions = appState.customQs[key].map(q => Object.assign({}, q, {custom: true}));
+      sp.qs = sp.qs.concat(customQuestions);
+    }
+  });
+});
+
+let currentTopic = 'all';
+
+function saveState() {
+  localStorage.setItem(V2_KEY, JSON.stringify(appState));
+  renderStats();
+}
+
+function generateLeetCodeLink(name) {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return 'https://leetcode.com/problems/' + slug + '/';
+}
+
+function countStats() {
+  let tot = 0, doneCount = 0;
+  let stats = { E: {t:0, d:0}, M: {t:0, d:0}, H: {t:0, d:0}, SD: {t:0, d:0} };
+  
+  topics.forEach(t => t.subpatterns.forEach(s => s.qs.forEach(q => {
+    tot++;
+    const isDone = appState.done.includes(q.n);
+    if (isDone) doneCount++;
+    if (stats[q.d]) {
+      stats[q.d].t++;
+      if (isDone) stats[q.d].d++;
+    } else {
+      // Default fallback
+      stats.SD.t++;
+      if(isDone) stats.SD.d++;
+    }
+  })));
+  return { tot, doneCount, stats };
+}
+
+function renderStats() {
+  const res = countStats();
+  document.getElementById('totalQ').textContent = res.tot;
+  document.getElementById('doneQ').textContent = res.doneCount;
+  
+  const pct = res.tot > 0 ? (res.doneCount / res.tot) * 100 : 0;
+  document.getElementById('totalPct').textContent = Math.round(pct) + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  
+  document.getElementById('totE').textContent = res.stats.E.t;
+  document.getElementById('doneE').textContent = res.stats.E.d;
+  document.getElementById('totM').textContent = res.stats.M.t;
+  document.getElementById('doneM').textContent = res.stats.M.d;
+  document.getElementById('totH').textContent = res.stats.H.t;
+  document.getElementById('doneH').textContent = res.stats.H.d;
+}
+
+function toggleDone(qName) {
+  const idx = appState.done.indexOf(qName);
+  if (idx > -1) appState.done.splice(idx, 1);
+  else appState.done.push(qName);
+  saveState();
+  renderTopicView();
+}
+
+function toggleBookmark(e, qName) {
+  e.stopPropagation();
+  e.preventDefault();
+  const idx = appState.bookmarks.indexOf(qName);
+  if (idx > -1) appState.bookmarks.splice(idx, 1);
+  else appState.bookmarks.push(qName);
+  saveState();
+  renderTopicView();
+}
+
+function toggleNotes(e, qIdStr) {
+  e.stopPropagation();
+  e.preventDefault();
+  const panel = document.getElementById('notes-' + qIdStr);
+  const btn = document.getElementById('noteBtn-' + qIdStr);
+  panel.classList.toggle('open');
+  btn.classList.toggle('active');
+}
+
+function saveNote(qName, val) {
+  if (!val.trim()) {
+    delete appState.notes[qName];
+  } else {
+    appState.notes[qName] = val;
+  }
+  saveState();
+}
+
+function addCustomQuestion(tId, spIdx) {
+  const nameInput = document.getElementById('new-q-name-' + tId + '-' + spIdx);
+  const diffInput = document.getElementById('new-q-diff-' + tId + '-' + spIdx);
+  const name = nameInput.value.trim();
+  const diff = diffInput.value;
+  
+  if (!name) return alert('Please enter a question name');
+  
+  const key = tId + '-' + spIdx;
+  if (!appState.customQs[key]) appState.customQs[key] = [];
+  
+  if (appState.customQs[key].find(q => q.n === name)) return alert('Question already exists here.');
+  
+  const newQ = { n: name, d: diff, custom: true };
+  appState.customQs[key].push(newQ);
+  saveState();
+  
+  const t = topics.find(topic => topic.id === tId);
+  t.subpatterns[spIdx].qs.push(newQ);
+  
+  renderTopicView();
+}
+
+function exportData() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+  const downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", "dsa_tracker_backup.json");
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (imported.done && typeof imported === 'object') {
+        appState = imported;
+        if(!appState.customQs) appState.customQs = {};
+        if(!appState.notes) appState.notes = {};
+        if(!appState.bookmarks) appState.bookmarks = {};
+        saveState();
+        alert('Data imported successfully! Reloading...');
+        location.reload();
+      } else {
+        alert('Invalid backup file structure.');
+      }
+    } catch (err) {
+      alert('Error parsing JSON file.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function renderTopicView() {
+  const container = document.getElementById('topicView');
+  const filtered = currentTopic === 'all' ? topics : topics.filter(t => t.id === currentTopic);
+  
+  container.innerHTML = filtered.map(topic => {
+    let tTot = 0, tDone = 0;
+    topic.subpatterns.forEach(sp => {
+      tTot += sp.qs.length;
+      tDone += sp.qs.filter(q => appState.done.includes(q.n)).length;
+    });
+    const isOpen = topic.isOpen ? 'open' : '';
+    const chev = topic.isOpen ? '▲' : '▼';
+    
+    return `
+    <div class="topic-card">
+      <div class="topic-header" onclick="toggleTopic('${topic.id}')">
+        <div class="topic-icon">${topic.icon}</div>
+        <div class="topic-title">
+          <div class="topic-name">${topic.name}</div>
+          <div class="topic-sub">${tDone} / ${tTot} completed</div>
+        </div>
+        <div class="topic-progress">${tTot > 0 ? Math.round((tDone/tTot)*100) : 0}%</div>
+        <div style="color: var(--text-muted); font-size: 12px;">${chev}</div>
+      </div>
+      <div class="topic-body ${isOpen}" id="body-${topic.id}">
+        ${topic.subpatterns.map((sp, spIdx) => `
+          <div class="subpattern">
+            <div class="sub-header">
+              <div class="sub-name">${sp.name} <span class="sub-tag">${sp.tag}</span></div>
+              <div style="font-size:12px; color:var(--text-muted)">${sp.qs.length} questions</div>
+            </div>
+            <div class="q-list">
+              ${sp.qs.map((q, qIdx) => {
+                const isDone = appState.done.includes(q.n);
+                const isBookmarked = appState.bookmarks.includes(q.n);
+                const noteVal = appState.notes[q.n] || '';
+                const hasNote = noteVal.length > 0;
+                const link = generateLeetCodeLink(q.n);
+                const safeQId = q.n.replace(/[^a-zA-Z0-9]/g, '') + '-' + qIdx;
+                
+                return `
+                <div class="q-item-container">
+                  <div class="q-item">
+                    <div class="q-check ${isDone ? 'done' : ''}" onclick="toggleDone('${q.n.replace(/'/g,"\\'")}')"></div>
+                    <a href="${link}" target="_blank" class="q-name ${isDone ? 'done' : ''}">${q.n} ${q.custom ? '<span class="sub-tag" style="margin-left:6px">Custom</span>' : ''}</a>
+                    <span class="diff-badge badge-${q.d}">${q.d}</span>
+                    <div class="q-actions">
+                      <button class="icon-btn ${hasNote ? 'active note' : ''}" id="noteBtn-${safeQId}" onclick="toggleNotes(event, '${safeQId}')" title="Notes">📝</button>
+                      <button class="icon-btn ${isBookmarked ? 'active star' : ''}" onclick="toggleBookmark(event, '${q.n.replace(/'/g,"\\'")}')" title="Bookmark">⭐</button>
+                    </div>
+                  </div>
+                  <div class="notes-panel" id="notes-${safeQId}">
+                    <textarea class="notes-textarea" placeholder="Add your notes here..." onblur="saveNote('${q.n.replace(/'/g,"\\'")}', this.value)">${noteVal}</textarea>
+                  </div>
+                </div>
+                `;
+              }).join('')}
+              
+              <div class="add-q-form">
+                <input type="text" id="new-q-name-${topic.id}-${spIdx}" class="input-text" placeholder="Custom question name...">
+                <select id="new-q-diff-${topic.id}-${spIdx}" class="input-select">
+                  <option value="E">Easy</option>
+                  <option value="M">Medium</option>
+                  <option value="H">Hard</option>
+                </select>
+                <button class="btn btn-primary" onclick="addCustomQuestion('${topic.id}', ${spIdx})">+ Add</button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTopic(id) {
+  const t = topics.find(topic => topic.id === id);
+  if (t) {
+    t.isOpen = !t.isOpen;
+    renderTopicView();
+  }
+}
+
+function renderTabs() {
+  const tabs = document.getElementById('topicTabs');
+  tabs.innerHTML = `<button class="tab ${currentTopic==='all'?'active':''}" onclick="filterTopic('all')">All Topics</button>` +
+    topics.map(t => `<button class="tab ${currentTopic===t.id?'active':''}" onclick="filterTopic('${t.id}')">${t.icon} ${t.name}</button>`).join('');
+}
+
+function filterTopic(id) {
+  currentTopic = id;
+  renderTabs();
+  renderTopicView();
+}
+
+// Init
+renderTabs();
+renderTopicView();
+renderStats();
+</script>
+</body>
+</html>
