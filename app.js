@@ -16,7 +16,7 @@ let appState = {
 
 let currentFilter = 'all'; // all | unsolved | bookmarks | dsa | design | behavioral
 let globalNumbering = new Map();
-let openDays = new Set([1]); // default Day 1 open
+let openDays = new Set(['1']); // default Day 1 open
 let collapsedWeeks = new Set();
 
 const SLUG_OVERRIDES = {
@@ -269,29 +269,56 @@ function handleSearch() {
   else renderTopicView();
 }
 
-function toggleDay(dayNum) {
-  if (openDays.has(dayNum)) openDays.delete(dayNum);
-  else openDays.add(dayNum);
-  renderDailyView();
+function toggleDay(el, dayNum) {
+  const dStr = String(dayNum);
+  const card = (el && el.closest) ? el.closest('.day-card') : document.getElementById('day-card-' + dStr.replace(/\s+/g, '-'));
+  if (card) {
+    const isOpen = card.classList.toggle('open');
+    if (isOpen) openDays.add(dStr);
+    else openDays.delete(dStr);
+  } else {
+    if (openDays.has(dStr)) openDays.delete(dStr);
+    else openDays.add(dStr);
+    renderDailyView();
+  }
 }
 
-function toggleWeek(weekNum) {
-  if (collapsedWeeks.has(weekNum)) collapsedWeeks.delete(weekNum);
-  else collapsedWeeks.add(weekNum);
-  renderDailyView();
+function toggleWeek(el, weekNum) {
+  const wStr = String(weekNum);
+  const container = (el && el.closest) ? el.closest('.week-container') : document.getElementById('week-sec-' + wStr);
+  if (container) {
+    const daysContainer = container.querySelector('.week-days');
+    const headerSpan = container.querySelector('.week-header-right span:last-child');
+    if (daysContainer) {
+      const isCollapsed = daysContainer.classList.toggle('collapsed');
+      if (isCollapsed) {
+        collapsedWeeks.add(wStr);
+        if (headerSpan) headerSpan.textContent = '▼ Expand';
+      } else {
+        collapsedWeeks.delete(wStr);
+        if (headerSpan) headerSpan.textContent = '▲ Collapse';
+      }
+    }
+  } else {
+    if (collapsedWeeks.has(wStr)) collapsedWeeks.delete(wStr);
+    else collapsedWeeks.add(wStr);
+    renderDailyView();
+  }
 }
 
 function expandAllDays() {
   if (typeof dailyRoadmap !== 'undefined') {
-    dailyRoadmap.forEach(d => openDays.add(d.day));
+    dailyRoadmap.forEach(d => openDays.add(String(d.day)));
     collapsedWeeks.clear();
-    renderDailyView();
+    document.querySelectorAll('.day-card').forEach(c => c.classList.add('open'));
+    document.querySelectorAll('.week-days').forEach(w => w.classList.remove('collapsed'));
+    document.querySelectorAll('.week-header-right span:last-child').forEach(s => s.textContent = '▲ Collapse');
   }
 }
 
 function collapseAllDays() {
   openDays.clear();
-  renderDailyView();
+  document.querySelectorAll('.day-card').forEach(c => c.classList.remove('open'));
 }
 
 function jumpToCurrentDay() {
@@ -299,22 +326,51 @@ function jumpToCurrentDay() {
   // Find first uncompleted day
   let target = dailyRoadmap.find(d => !isDayCompleted(d));
   if (!target) target = dailyRoadmap[dailyRoadmap.length - 1];
-  openDays.add(target.day);
-  collapsedWeeks.delete(target.week);
-  renderDailyView();
-  setTimeout(() => {
-    const el = document.getElementById('day-card-' + String(target.day).replace(/\s+/g, '-'));
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 100);
+  const dStr = String(target.day);
+  openDays.add(dStr);
+  collapsedWeeks.delete(String(target.week));
+
+  const weekEl = document.getElementById('week-sec-' + target.week);
+  if (weekEl) {
+    const daysContainer = weekEl.querySelector('.week-days');
+    if (daysContainer) daysContainer.classList.remove('collapsed');
+    const headerSpan = weekEl.querySelector('.week-header-right span:last-child');
+    if (headerSpan) headerSpan.textContent = '▲ Collapse';
+  }
+
+  const card = document.getElementById('day-card-' + dStr.replace(/\s+/g, '-'));
+  if (card) {
+    card.classList.add('open');
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    renderDailyView();
+    setTimeout(() => {
+      const el = document.getElementById('day-card-' + dStr.replace(/\s+/g, '-'));
+      if (el) {
+        el.classList.add('open');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  }
 }
 
 function jumpToWeek(weekNum) {
-  collapsedWeeks.delete(weekNum);
-  renderDailyView();
-  setTimeout(() => {
-    const el = document.getElementById('week-sec-' + weekNum);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
+  const wStr = String(weekNum);
+  collapsedWeeks.delete(wStr);
+  const weekEl = document.getElementById('week-sec-' + wStr);
+  if (weekEl) {
+    const daysContainer = weekEl.querySelector('.week-days');
+    if (daysContainer) daysContainer.classList.remove('collapsed');
+    const headerSpan = weekEl.querySelector('.week-header-right span:last-child');
+    if (headerSpan) headerSpan.textContent = '▲ Collapse';
+    weekEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    renderDailyView();
+    setTimeout(() => {
+      const el = document.getElementById('week-sec-' + wStr);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
 }
 
 function isDayCompleted(dayEntry) {
@@ -419,7 +475,7 @@ function renderDailyView() {
 
       overallMatches++;
       const isCompleted = isDayCompleted(dayEntry);
-      const isDayOpen = openDays.has(dayEntry.day) || searchQ.length > 0;
+      const isDayOpen = openDays.has(String(dayEntry.day)) || searchQ.length > 0;
       const safeDayId = String(dayEntry.day).replace(/\s+/g, '-');
 
       // Day Type Badge info
@@ -547,7 +603,7 @@ function renderDailyView() {
 
       weekDaysHtml += `
         <div class="day-card ${isDayOpen ? 'open' : ''} ${isCompleted ? 'completed' : ''}" id="day-card-${safeDayId}">
-          <div class="day-header" onclick="toggleDay('${dayEntry.day}')">
+          <div class="day-header" onclick="toggleDay(this, '${dayEntry.day}')">
             <div class="day-num">Day ${dayEntry.day}</div>
             <div class="day-info">
               <span class="day-category">${dayEntry.category}</span>
@@ -568,11 +624,11 @@ function renderDailyView() {
     });
 
     if (weekDaysHtml) {
-      const isWeekCollapsed = collapsedWeeks.has(w.week) && !searchQ;
+      const isWeekCollapsed = collapsedWeeks.has(String(w.week)) && !searchQ;
       const weekPct = weekTotal > 0 ? Math.round((weekDone / weekTotal) * 100) : 0;
       html += `
         <div class="week-container" id="week-sec-${w.week}">
-          <div class="week-header" onclick="toggleWeek(${w.week})">
+          <div class="week-header" onclick="toggleWeek(this, '${w.week}')">
             <div class="week-header-left">
               <span>📅 ${w.title}</span>
             </div>

@@ -25,12 +25,12 @@
   <!-- View Switcher Navigation -->
   <div class="view-nav">
     <div class="nav-tab-group">
-      <a href="daily_roadmap.html" class="nav-tab active">
+      <button class="nav-tab active" id="tabDaily" onclick="switchView('daily')">
         <span>📅</span> 150-Day Daily Roadmap
-      </a>
-      <a href="index.html" class="nav-tab">
+      </button>
+      <button class="nav-tab" id="tabTopic" onclick="switchView('topic')">
         <span>📚</span> Topic-wise Roadmap
-      </a>
+      </button>
     </div>
     <a href="dsa_60day_roadmap.old.html" class="nav-tab nav-tab-secondary" title="View the original 60-day roadmap file">
       <span>⏪</span> Old 60-Day Roadmap
