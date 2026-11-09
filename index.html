@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DSA Tracker Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title>DSA Tracker Pro - 150 Days Daily Challenge & Topic Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,14 +12,29 @@
 <div class="app-container">
   <div class="header">
     <div class="header-left">
-      <h1>DSA Tracker</h1>
-      <p>Professional Topic-wise Roadmap</p>
+      <h1>DSA Tracker Pro</h1>
+      <p id="viewSubtitle">150 Days Master Challenge & Daily LeetCode Roadmap</p>
     </div>
     <div class="header-actions">
       <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
       <button class="btn" onclick="document.getElementById('importFile').click()">Import JSON</button>
       <button class="btn btn-primary" onclick="exportData()">Export Data</button>
     </div>
+  </div>
+
+  <!-- View Switcher Navigation -->
+  <div class="view-nav">
+    <div class="nav-tab-group">
+      <button class="nav-tab active" id="tabDaily" onclick="switchView('daily')">
+        <span>📅</span> 150-Day Daily Roadmap
+      </button>
+      <button class="nav-tab" id="tabTopic" onclick="switchView('topic')">
+        <span>📚</span> Topic-wise Roadmap
+      </button>
+    </div>
+    <a href="dsa_60day_roadmap.old.html" class="nav-tab nav-tab-secondary" title="View the original 60-day roadmap file">
+      <span>⏪</span> Old 60-Day Roadmap
+    </a>
   </div>
 
   <div class="heatmap-container">
@@ -29,7 +44,7 @@
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-label">Total Progress</div>
+      <div class="stat-label">Total Questions Solved</div>
       <div class="stat-val"><span id="doneQ">0</span> / <span id="totalQ">0</span></div>
       <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;"><span id="totalPct">0%</span> Completed</div>
     </div>
@@ -41,19 +56,51 @@
         <div class="diff-H">Hard: <span id="doneH">0</span>/<span id="totH">0</span></div>
       </div>
     </div>
+    <div class="stat-card" id="cardDaysDone">
+      <div class="stat-label">Days Finished</div>
+      <div class="stat-val"><span id="doneDays">0</span> / <span id="totDays">150</span></div>
+      <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;"><span id="daysPct">0%</span> Days Completed</div>
+    </div>
   </div>
 
+  <!-- Toolbar with search & filters -->
   <div class="toolbar">
-    <input type="text" id="searchInput" class="search-input" placeholder="Search questions..." oninput="renderTopicView()">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search questions, topics, or days (e.g. 'Two Sum', 'Day 10', 'Graphs')..." oninput="handleSearch()">
     <button class="btn" id="filterBtnAll" onclick="setFilter('all')">All</button>
     <button class="btn" id="filterBtnUnsolved" onclick="setFilter('unsolved')">Unsolved</button>
     <button class="btn" id="filterBtnBookmarks" onclick="setFilter('bookmarks')">Bookmarks</button>
+    <button class="btn" id="filterBtnDSA" onclick="setFilter('dsa')">DSA</button>
+    <button class="btn" id="filterBtnDesign" onclick="setFilter('design')">System Design</button>
+    <button class="btn" id="filterBtnBehavioral" onclick="setFilter('behavioral')">Behavioral</button>
   </div>
 
-  <div id="topicView"></div>
+  <!-- Day View Controls (visible in daily view) -->
+  <div id="dailyControls" class="view-controls">
+    <div class="phase-legend">
+      <span>Phases:</span>
+      <span class="phase-badge phase-badge-1">1: Basics</span>
+      <span class="phase-badge phase-badge-2">2: Patterns</span>
+      <span class="phase-badge phase-badge-3">3: Trees & DP</span>
+      <span class="phase-badge phase-badge-4">4: Advanced</span>
+      <span class="phase-badge phase-badge-5">5: Hard & Design</span>
+    </div>
+    <div class="quick-btns">
+      <button class="btn btn-sm" onclick="expandAllDays()">Expand All</button>
+      <button class="btn btn-sm" onclick="collapseAllDays()">Collapse All</button>
+      <button class="btn btn-sm" onclick="jumpToCurrentDay()">🎯 Jump to Current Day</button>
+    </div>
+  </div>
+
+  <!-- Week Quick Jump Navigator -->
+  <div id="weekNavigator" class="week-navigator"></div>
+
+  <!-- Views -->
+  <div id="dailyView"></div>
+  <div id="topicView" style="display:none"></div>
 </div>
 
 <script src="data.js"></script>
+<script src="daily_data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
